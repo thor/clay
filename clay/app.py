@@ -4,13 +4,14 @@ The commandline startup script
 """
 import os
 import sys
-sys.path.insert(0, '.')  # noqa
-
 import argparse
 
-from clay.core import meta, settings_manager
+sys.path.insert(0, '.')  # noqa
+
+from clay.core import meta
 from clay.playback.player import get_player
 import clay.ui.urwid as urwid
+import clay.ui.gtk as gtk
 
 
 player = get_player()  # pylint: disable=invalid-name
@@ -50,13 +51,43 @@ def main():
     )
 
     parser.add_argument("-v", "--version", action=MultilineVersionAction)
+    # parser.add_argument("--osd", action='store_true', nargs=1,
+    # help="Disabling or enabling desktop notifications")
+    # osd_group = parser.add_mutually_exclusive_group()
+
+    # osd_group.add_argument(
+    #     "--enable-osd",
+    #     help="enable sending desktop notifications",
+    #     action="store_true")
+
+    # osd_group.add_argument(
+    #     "--disable-osd",
+    #     help="disable sending desktop notifications",
+    #     action="store_true"
+    # )
+
+    # player_group = parser.add_mutually_exclusive_group()
+
+    # player_group.add_argument(
+    #     "--mpv",
+    #     help="play tracks of using the MPV player",
+    #     action="store_true"
+    # )
+
+    # player_group.add_argument(
+    #     "--vlc",
+    #     help="Play tracks of using the VLC player",
+    #     action="store_true"
+    # )
 
     args = parser.parse_args()
+
+    # osd.ENABLED = args.enable_osd or args.disable_osd
 
     if args.version:
         exit(0)
 
-    urwid.main()
+    gtk.main()
 
 
 if __name__ == '__main__':

@@ -136,6 +136,7 @@ class VLCPlayer(AbstractPlayer):
         Completes in background.
         """
         track = self.queue.get_current_track()
+        print(track)
         if track is None:
             return
         self._loading = True
