@@ -277,7 +277,7 @@ class _GP(object):
         Refresh the liked songs playlist
         """
         self.liked_songs.refresh_tracks(
-            self.mobile_client.get_promoted_songs())
+            self.mobile_client.get_top_songs())
 
     refresh_liked_songs_async = asynchronous(refresh_liked_songs)
 

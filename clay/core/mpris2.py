@@ -412,6 +412,6 @@ try:
                 ('/org/mpris/MediaPlayer2/TrackList', mpris2_manager))
 
 except RuntimeError as e:
-    logger.error(e)
+    logger.error(str(e))
     logger.warn(
         "An another instance of Clay is already running so we can't start MPRIS2")
