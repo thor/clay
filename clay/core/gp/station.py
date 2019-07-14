@@ -19,6 +19,7 @@ Contains the classes and functions for Google Music stations
 from . import track, client
 from .utils import asynchronous, Source
 
+
 class Station(object):
     """
     Model that represents specific station on Google Play Music.
@@ -35,7 +36,7 @@ class Station(object):
         return self.name
 
     @property
-    def id(self):  # pylint: disable=invalid-name
+    def id(self):
         """
         Station ID.
         """
@@ -73,6 +74,7 @@ class Station(object):
             station_id=data['id'],
             name=data['name']
         )
+
 
 class IFLStation(Station):
     """

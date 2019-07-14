@@ -69,7 +69,6 @@ class Artist(object):
         self._store_albums.sort()
         self._all_songs.refresh = True
 
-
     @property
     def albums(self):
         """
@@ -88,7 +87,7 @@ class Artist(object):
         return chain(self._special_albums, self._store_albums, self._library_albums)
 
     @property
-    def id(self):  # pylint: disable=invalid-name
+    def id(self):
         """
         Artist ID.
         """

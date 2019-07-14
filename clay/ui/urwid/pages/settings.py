@@ -9,7 +9,8 @@ from clay.playback.player import get_player
 from clay.ui.urwid import hotkey_manager
 
 
-player = get_player()  # pylint: disable=invalid-name
+player = get_player()
+
 
 class SettingsPage(urwid.Columns, AbstractPage):
     """

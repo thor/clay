@@ -2,10 +2,9 @@
 Hotkeys management.
 Requires "gi" package and "Gtk" & "Keybinder" modules.
 """
-# pylint: disable=broad-except
 from clay.core import settings_manager, logger
-
 from string import ascii_letters, digits
+
 
 def report_error(exc):
     "Print an error message to the debug screen"
@@ -91,4 +90,5 @@ class _HotkeyManager(object):
 
         return ret
 
-hotkey_manager = _HotkeyManager()  # pylint: disable=invalid-name
+
+hotkey_manager = _HotkeyManager()

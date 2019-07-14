@@ -17,4 +17,4 @@
 This file contains the module organization of the Google Play specific stuff
 """
 
-from .client import gp
+from .client import gp  # noqa: F401

@@ -1,10 +1,9 @@
 """
-An implementation of the Clay player using VLC
+An implementation of the Clay player using MPV
 
 Copyright (c) 2018, Clay Contributors
 """
-from ctypes import CFUNCTYPE, c_void_p, c_int, c_char_p
-from clay.core import osd_manager, logger, meta, settings_manager
+from clay.core import osd_manager, logger, settings_manager
 
 import mpv
 from .abstract import AbstractPlayer
@@ -107,7 +106,7 @@ class MPVPlayer(AbstractPlayer):
         """
         self._loading = False
         if error:
-            #notification_area.notify('Failed to request media URL: {}'.format(str(error)))
+            # notification_area.notify('Failed to request media URL: {}'.format(str(error)))
             logger.error(
                 'Failed to request media URL for track %s: %s',
                 track.original_data,
@@ -206,8 +205,9 @@ class MPVPlayer(AbstractPlayer):
         """
         try:
             self.media_player.seek(int(self.length_seconds * delta))
-        except:
-            pass
+        # properly handle this
+        except Exception as e:
+            logger.error(e)
 
     def seek_absolute(self, position):
         """
@@ -216,8 +216,9 @@ class MPVPlayer(AbstractPlayer):
         """
         try:
             self.media_player.seek(int(self.length_seconds * position), reference='absolute')
-        except:
-            pass
+        # properly handle this
+        except Exception as e:
+            logger.error(e)
 
     @staticmethod
     def get_equalizer_freqs():

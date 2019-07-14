@@ -27,7 +27,7 @@ class _Notification(urwid.Columns):
         ])
 
     @property
-    def id(self):  # pylint: disable=invalid-name
+    def id(self):
         """
         Notification ID.
         """
@@ -132,4 +132,4 @@ class _NotificationArea(urwid.Pile):
         self.contents[-1][0].close()
 
 
-notification_area = _NotificationArea()  # pylint: disable=invalid-name
+notification_area = _NotificationArea()

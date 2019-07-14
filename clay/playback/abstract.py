@@ -281,7 +281,6 @@ class AbstractPlayer:
         Runs in background.
         """
         track.create_station_async(callback=self._create_station_ready)
-        #raise NotImplementedError
 
     @property
     def random(self):
@@ -515,4 +514,5 @@ e        """
         """
         raise NotImplementedError
 
-player = AbstractPlayer() # pylint: disable=invalid-name
+
+player = AbstractPlayer()

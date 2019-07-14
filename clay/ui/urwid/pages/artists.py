@@ -5,7 +5,7 @@ import urwid
 
 from .page import AbstractPage, AbstractListItem, AbstractListBox
 from clay.core import gp
-from clay.ui.urwid import SongListBox, hotkey_manager
+from clay.ui.urwid import SongListBox
 
 
 class ArtistListBox(AbstractListBox):

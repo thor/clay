@@ -3,9 +3,10 @@ Components for " playlists" page.
 """
 import urwid
 
-from .page import AbstractPage, AbstractListBox, AbstractListItem
+from .page import AbstractPage, AbstractListBox
 from clay.core import gp
-from clay.ui.urwid import SongListBox, notification_area, hotkey_manager
+from clay.ui.urwid import SongListBox
+
 
 class PlaylistListBox(AbstractListBox):
     """
@@ -24,6 +25,7 @@ class PlaylistListBox(AbstractListBox):
                 urwid.Text(u'\n \uf01e Loading playlists...', align='center')
             ]
             gp.get_all_user_playlist_contents_async(callback=self.populate)
+
 
 class PlaylistsPage(urwid.Columns, AbstractPage):
     """

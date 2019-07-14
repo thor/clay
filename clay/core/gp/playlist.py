@@ -33,7 +33,7 @@ class Playlist(object):
         return "{} ({})".format(self.name, len(self.tracks))
 
     @property
-    def id(self):  # pylint: disable=invalid-name
+    def id(self):
         """
         Playlist ID.
         """
@@ -62,7 +62,7 @@ class LikedSongs(object):
     This mirrors the "liked songs" generated playlist feature of the Google Play Music apps.
     """
     def __init__(self):
-        self._id = None  # pylint: disable=invalid-name
+        self._id = None
         self.name = "Liked Songs"
         self._uploaded_tracks = []  # uploaded songs
         self._tracks = []

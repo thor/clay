@@ -4,7 +4,9 @@ max-line-length=120
 
 ignore =
     # blank line at end of file
-    W391
+    W391,
+    # do not assign a lambda expression, use a def
+    E731,
 
 exclude =
     # Generated stuff
@@ -27,5 +29,5 @@ exclude =
     wsgi.py,
     utils,
     # VLC bindings
-    vlc.py
-
+    clay/playback/libvlc.py,
+    docs

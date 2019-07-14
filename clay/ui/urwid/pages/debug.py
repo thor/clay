@@ -22,9 +22,7 @@ class DebugItem(urwid.AttrMap):
             ('pack', urwid.Text(self.log_record.verbosity.ljust(8))),
             urwid.Text(
                 (
-                    self.log_record.formatted_timestamp +
-                    '\n' +
-                    self.log_record.formatted_message
+                    self.log_record.formatted_timestamp + '\n' + self.log_record.formatted_message
                 )
             )
         ])

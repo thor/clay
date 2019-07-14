@@ -7,6 +7,7 @@ import urwid
 from clay.core import gp
 from clay.ui.urwid import hotkey_manager, notification_area
 
+
 class AbstractPage(object):
     """
     Represents app page.

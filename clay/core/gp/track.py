@@ -100,7 +100,7 @@ class Track(object):
         self.original_data = data
 
     @property
-    def id(self):  # pylint: disable=invalid-name
+    def id(self):
         """
         Return ID for this track.
         """
@@ -140,7 +140,7 @@ class Track(object):
                 track = Track(source, data)
 
             return track
-        except Exception as error:  # pylint: disable=bare-except
+        except Exception as error:
             logger.error(
                 'Failed to parse track data: %s, failing data: %s',
                 repr(error),

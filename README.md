@@ -216,10 +216,6 @@ This replaces the old X Hotkeys systems but does require you to manually bind th
 - `<SHIFT> <LEFT|RIGHT>` - seek backward/forward by 5% of the song duration
 - `<CTRL> q` - seek to song beginning
 
-## Equalizer
-- `+` - increase amplification
-- `-` - decrease amplification
-
 ## Misc
 
 - `<ESC>` or `<CTRL> /` or <CTRL> _ - close most recent notification or popup
