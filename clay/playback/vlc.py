@@ -10,14 +10,12 @@ from . import libvlc as vlc
 from .abstract import AbstractPlayer
 
 
-#+pylint: disable=unused-argument
 def _dummy_log(data, level, ctx, fmt, args):
     """
     A dummy callback function for VLC so it doesn't write to stdout.
     Should probably do something in the future
     """
     pass
-#+pylint: enable=unused-argument
 
 
 class VLCPlayer(AbstractPlayer):
@@ -164,7 +162,7 @@ class VLCPlayer(AbstractPlayer):
         self._loading = False
 
         if error:
-            #notification_area.notify('Failed to request media URL: {}'.format(str(error)))
+            # notification_area.notify('Failed to request media URL: {}'.format(str(error)))
             logger.error(
                 'Failed to request media URL (%s) for track %s: %s',
                 url, track.original_data, str(error)
@@ -177,6 +175,7 @@ class VLCPlayer(AbstractPlayer):
         osd_manager.notify(track.title, "by {}\nfrom {}\n".format(track.artist, track.album_name),
                            ("media-skip-backward", "media-playback-pause", "media-skip-forward"),
                            track.get_artist_art_filename())
+
     @property
     def playing(self):
         """

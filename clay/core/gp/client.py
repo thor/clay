@@ -168,7 +168,6 @@ class _GP(object):
         """
         Try to use cached token to log into Google Play Music.
         """
-        # pylint: disable=protected-access
         self.mobile_client.session._authtoken = authtoken
         self.mobile_client.session.is_authenticated = True
         self.mobile_client.android_id = device_id
@@ -188,7 +187,6 @@ class _GP(object):
         """
         Return currently active auth token.
         """
-        # pylint: disable=protected-access
         return self.mobile_client.session._authtoken
 
     @synchronized
@@ -245,7 +243,7 @@ class _GP(object):
         self.cached_stations.insert(0, IFLStation())
         return self.cached_stations
 
-    get_all_user_station_contents_async = (  # pylint: disable=invalid-name
+    get_all_user_station_contents_async = (
         asynchronous(get_all_user_station_contents)
     )
 
@@ -267,7 +265,7 @@ class _GP(object):
         self.cached_playlists.insert(0, self.liked_songs)
         return self.cached_playlists
 
-    get_all_user_playlist_contents_async = (  # pylint: disable=invalid-name
+    get_all_user_playlist_contents_async = (
         asynchronous(get_all_user_playlist_contents)
     )
 
@@ -335,5 +333,6 @@ class _GP(object):
         Return True if user is subscribed on Google Play Music, false otherwise.
         """
         return self.mobile_client.is_subscribed
+
 
 gp = _GP()

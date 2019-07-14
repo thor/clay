@@ -2,11 +2,10 @@
 Components for " playlists" page.
 """
 import urwid
-from collections import ChainMap
 
 from .page import AbstractPage, AbstractListBox, AbstractListItem
 from clay.core import gp
-from clay.ui.urwid import SongListBox, notification_area, hotkey_manager
+from clay.ui.urwid import SongListBox
 
 
 class AlbumListBox(AbstractListBox):

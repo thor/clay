@@ -1,7 +1,6 @@
 """
 Logger implementation.
 """
-# pylint: disable=too-few-public-methods
 from threading import Lock
 from datetime import datetime
 
@@ -106,4 +105,4 @@ class _Logger(object):
         return self.logs
 
 
-logger = _Logger()  # pylint: disable=invalid-name
+logger = _Logger()

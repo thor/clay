@@ -28,6 +28,7 @@ class Type(Enum):
     uploaded = 'uploaded'
     store = 'store'
 
+
 class Source(Enum):
     """
     The source of the track list

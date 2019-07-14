@@ -1,18 +1,6 @@
 """
 Components for song listing.
 """
-# pylint: disable=too-many-arguments
-# pylint: disable=too-many-instance-attributes
-# pylint: disable=too-many-public-methods
-from operator import lt, gt
-from string import digits
-
-try:
-    # Python 3.x
-    from string import ascii_letters
-except ImportError:
-    # Python 2.x
-    from string import letters as ascii_letters
 import urwid
 
 from clay.core import gp, settings_manager
@@ -23,7 +11,7 @@ from .hotkeys import hotkey_manager
 from .clipboard import copy
 
 
-player = get_player()  # pylint: disable=invalid-name
+player = get_player()
 
 
 class SongListItem(urwid.Pile):

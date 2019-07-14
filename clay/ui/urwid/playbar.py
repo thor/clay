@@ -1,14 +1,13 @@
 """
 PlayBar widget.
 """
-# pylint: disable=too-many-instance-attributes
 import urwid
 
 from clay.core import settings_manager, meta
 from clay.playback.player import get_player
 
 
-player = get_player()  # pylint: disable=invalid-name
+player = get_player()
 
 
 class ProgressBar(urwid.Widget):
@@ -193,7 +192,6 @@ class PlayBar(urwid.Pile):
             if player.repeat_one \
             else 'flag'
         self.app.redraw()
-
 
     def tick(self):
         """

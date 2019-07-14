@@ -136,4 +136,4 @@ class _OSDManager(object):
         self.notifications = None
 
 
-osd_manager = _OSDManager()  # pylint: disable=invalid-name
+osd_manager = _OSDManager()

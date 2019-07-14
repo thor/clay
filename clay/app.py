@@ -8,12 +8,12 @@ sys.path.insert(0, '.')  # noqa
 
 import argparse
 
-from clay.core import meta, settings_manager
+from clay.core import meta
 from clay.playback.player import get_player
 import clay.ui.urwid as urwid
 
 
-player = get_player()  # pylint: disable=invalid-name
+player = get_player()
 
 
 class MultilineVersionAction(argparse.Action):

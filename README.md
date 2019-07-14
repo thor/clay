@@ -22,19 +22,26 @@
 - [Credits](#credits)
 - [Changelog](./CHANGELOG.rst)
 
-# Clay [beta]
+# Clay [omega]
 
 [![Build Status](https://travis-ci.org/and3rson/clay.svg?branch=master)](https://travis-ci.org/and3rson/clay) [![Documentation Status](https://readthedocs.org/projects/clay/badge/?version=latest)](http://clay.readthedocs.io/en/latest/?badge=latest) [![PyPI version](https://badge.fury.io/py/clay-player.svg)](https://badge.fury.io/py/clay-player) [![Maintainability](https://api.codeclimate.com/v1/badges/33fc2ac7949ddd9a51ee/maintainability?1)](https://codeclimate.com/github/and3rson/clay/maintainability)
 
-Standalone command line player for Google Play Music.
+Standalone commandline player for Google Play Music and, possibly,
+Youtube Music.
 
 This app wouldn't be possible without the wonderful [gmusicapi] and [VLC] & [MPV] libraries.
 
 This project is neither affiliated nor endorsed by Google.
 
-It's being actively developed, but is still in the early beta stage, so many features are missing and/or may be bugged.
 
-We're on IRC!
+This is a friendly fork from the original made by the amazing Andrew
+Dunai to make it easier to bigger decisions until he is able to
+actively work on it again. You can find the original at and3rson/clay.
+
+This project is still under development so there are plenty of missing
+features and at least a few bugs.
+
+Join us over at Andrew's IRC!
 
 - Server: irc.oftc.net
 - Channel: **#clay**
@@ -209,10 +216,6 @@ This replaces the old X Hotkeys systems but does require you to manually bind th
 - `<SHIFT> <LEFT|RIGHT>` - seek backward/forward by 5% of the song duration
 - `<CTRL> q` - seek to song beginning
 
-## Equalizer
-- `+` - increase amplification
-- `-` - decrease amplification
-
 ## Misc
 
 - `<ESC>` or `<CTRL> /` or <CTRL> _ - close most recent notification or popup
@@ -224,22 +227,25 @@ This replaces the old X Hotkeys systems but does require you to manually bind th
 At some point, the app may fail. Possible reasons are app bugs,
 Google Play Music API issues, [gmusicapi] bugs, [urwid] bugs etc.
 
-If you encounter a problem, please feel free to submit an [issue](https://github.com/and3rson/clay/issues).
-I'll try to figure it out ASAP.
+If you encounter a problem, please feel free to submit an [issue](https://github.com/ValentijnvdBeek/clay/issues).
+We'll try to figure it out ASAP.
 
 Most issues can be reproduced only with specific data coming from Google Play Music servers.
 
 Use "Debug" tab within app to select the error and hit "Enter" to copy it into clipboard.
-This will help me to investigate this issue.
+This will help us to investigate this issue.
 
 # Credits
 
-Made by Andrew Dunai.
+The original is made by Andrew Dunai.
+
+Currently developed by Valentijn van de Beek
 
 Regards to [gmusicapi] and [VLC] who made this possible.
 
 People who contribute to this project:
 
+- [@and3rson (Andrew Dunai)](https://github.com/and3rson)
 - [@ValentijnvdBeek (Valentijn)](https://github.com/ValentijnvdBeek)
 - [@Vale981 (Valentin Boettcher)](https://github.com/vale981)
 - [@Fluctuz](https://github.com/Fluctuz)

@@ -1,4 +1,3 @@
-#: pylint:skip-file
 hotkeys:
   global:
     play_pause: p
@@ -44,10 +43,6 @@ hotkeys:
 
   search_page:
     send_query: enter
-
-  settings_page:
-    equalizer_up: "+"
-    equalizer_down: "-"
 
 clay_settings:
   mod_key: ctrl

@@ -1,18 +1,15 @@
 import urwid
 import sys
 
-from clay.core import gp, settings_manager
+from clay.core import gp, settings_manager, logger
 from clay.playback.player import get_player
 
-from .clipboard import copy
 from .hotkeys import hotkey_manager
 from .notifications import notification_area
 from .playbar import PlayBar
-from .songlist import SongListBox
-from .pages import *
+from .pages import *  # noqa: F403
 
-
-player = get_player()  # pylint: disable=invalid-name
+player = get_player()
 
 
 class AppWidget(urwid.Frame):
@@ -54,15 +51,15 @@ class AppWidget(urwid.Frame):
 
     def __init__(self):
         self.pages = [
-            DebugPage(self),
-            LibraryPage(self),
-            ArtistsPage(self),
-            AlbumsPage(self),
-            StationsPage(self),
-            PlaylistsPage(self),
-            SearchPage(self),
-            QueuePage(self),
-            SettingsPage(self)
+            DebugPage(self),      # noqa: F405
+            LibraryPage(self),    # noqa: F405
+            ArtistsPage(self),    # noqa: F405
+            AlbumsPage(self),     # noqa: F405
+            StationsPage(self),   # noqa: F405
+            PlaylistsPage(self),  # noqa: F405
+            SearchPage(self),     # noqa: F405
+            QueuePage(self),      # noqa: F405
+            SettingsPage(self)    # noqa: F405
         ]
         self.tabs = [AppWidget.Tab(page) for page in self.pages]
         self.current_page = None
@@ -177,7 +174,7 @@ class AppWidget(urwid.Frame):
         try:
             self.current_page.songlist.end_filtering()
         except AttributeError as e:
-            pass
+            logger.error(e)
 
         page = [page for page in self.pages if page.slug == slug][0]
         self.current_page = page
@@ -344,7 +341,6 @@ def main():
     # Create a 256 colour palette.
     palette = [(name, '', '', '', res['foreground'], res['background'])
                for name, res in settings_manager.colours_config.items()]
-
 
     # Run the actual program
     app_widget = AppWidget()

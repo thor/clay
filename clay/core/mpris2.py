@@ -6,14 +6,13 @@ import pkg_resources
 
 from pydbus import SessionBus, Variant
 from pydbus.generic import signal
-from clay.core import meta
+from clay.core import logger
 from clay.playback.player import get_player
 
 
-player = get_player()  # pylint: disable=invalid-name
+player = get_player()
 
 
-# pylint: disable=invalid-name,missing-docstring
 class MPRIS2:
     """
     An object that defines and implements the MPRIS2 protocol for Clay
@@ -158,7 +157,6 @@ class MPRIS2:
 
     Seeked = signal()
 
-    # pylint: disable=no-else-return
     @property
     def PlaybackStatus(self):
         """
@@ -393,8 +391,7 @@ try:
                 ('/org/mpris/MediaPlayer2', mpris2_manager),
                 ('/org/mpris/MediaPlayer2/Player', mpris2_manager),
                 ('/org/mpris/MediaPlayer2/TrackList', mpris2_manager))
-             #   ('Clay', clay))
 
 except RuntimeError as e:
-    print(e)
-    print("An another instance of Clay is already running so we can't start MPRIS2")
+    logger.error(e)
+    logger.warn("An another instance of Clay is already running so we can't start MPRIS2")

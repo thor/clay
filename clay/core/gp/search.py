@@ -20,6 +20,7 @@ from .utils import Source
 from .artist import Artist
 from .track import Track
 
+
 class SearchResults(object):
     """
     Model that represents search results including artists & tracks.
