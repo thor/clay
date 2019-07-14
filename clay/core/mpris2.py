@@ -94,7 +94,6 @@ class MPRIS2:
     ####################################################################
     # The following is an implementation of the MPRIS2 Player Protocol #
     ####################################################################
-
     def Next(self):
         """
         Goes to the next song in the queue.
@@ -180,7 +179,20 @@ class MPRIS2:
         else:
             return "None"
 
-    # TODO: We don't allow someone to control playback atm so this doesn't do anything
+    @LoopStatus.setter  # F811: noaq
+    def LoopStatus(self, text):
+        if text == "Track":
+            player.repeat_one = True
+            player.repeat_queue = False
+        elif text == "Playlist":
+            player.repeat_queue = True
+            player.repeat_one = False
+        else:
+            player.repeat_queue = False
+            player.repeat_one = False
+
+        # TODO: We don't allow someone to control playback atm so this doesn't do anything
+
     @property
     def MinimumRate(self):
         return -1.0
@@ -237,6 +249,13 @@ class MPRIS2:
     def Shuffle(self):
         return player.random
 
+    @Shuffle.setter
+    def Shuffle(self, bool_):
+        if bool_:
+            player.random = True
+        else:
+            player.random = False
+
     @property
     def Volume(self):
         return player.volume / 100
@@ -264,7 +283,6 @@ class MPRIS2:
     ######################################################
     # An implementation of the MPRIS2 tracklist protocol #
     ######################################################
-
     def GetTracksMetadata(self, track_ids):
         """
         Gets all the metadata avaliable for a set of tracks.
@@ -383,7 +401,8 @@ def load_xml(name):
 
 
 bus = SessionBus()
-MPRIS2.dbus = [load_xml(file_) for file_ in ["", ".Player", ".TrackList", ".Playlists"]]
+MPRIS2.dbus = [load_xml(file_)
+               for file_ in ["", ".Player", ".TrackList", ".Playlists"]]
 mpris2_manager = MPRIS2()
 
 try:
@@ -394,4 +413,5 @@ try:
 
 except RuntimeError as e:
     logger.error(e)
-    logger.warn("An another instance of Clay is already running so we can't start MPRIS2")
+    logger.warn(
+        "An another instance of Clay is already running so we can't start MPRIS2")
