@@ -9,7 +9,10 @@ gi.require_version('Handy', '0.0')
 from gi.repository import Gtk, Handy, GObject
 from clay.core import gp, settings_manager
 from clay.playback.player import get_player
+
 from .pages import library
+from .playbar import PlayBar
+
 
 player = get_player()
 
@@ -37,8 +40,9 @@ class Content(Handy.Leaflet):
         self._sidebar.add(self._play_button)
 
         self._separator = Gtk.Separator()
-        self._content = library.LibraryPage()
-        self.playbar = Gtk.Label(label="test")
+        self._content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self._content.pack_start(library.LibraryPage(), True, True, 0)
+        self._content.pack_end(PlayBar(), False, True, 0)
 
         self._app.size_groups['sidebar'].add_widget(self._sidebar)
         self._app.size_groups['separator'].add_widget(self._separator)

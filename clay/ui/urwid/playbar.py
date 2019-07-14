@@ -194,7 +194,6 @@ class PlayBar(urwid.Pile):
             else 'flag'
         self.app.redraw()
 
-
     def tick(self):
         """
         Increase rotating index & trigger redraw.

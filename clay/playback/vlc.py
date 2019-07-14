@@ -209,7 +209,10 @@ class VLCPlayer(AbstractPlayer):
         else:
             osd_manager.notify("Playing", body, ("media-skip-backward", "media-playback-pause",
                                                  "media-skip-forward"), "media-playback-start")
-            self.media_player.play()
+            if self.play_progress == 1.0:
+                self.next()
+            else:
+                self.media_player.play()
 
     @property
     def play_progress(self):

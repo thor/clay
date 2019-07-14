@@ -128,9 +128,6 @@ class _Queue(object):
         Manual track switching calls this method with ``force=True`` while
         :class:`.Player` end-of-track event will call it with ``force=False``.
         """
-        if self.current_track_index >= len(self.tracks):
-            return
-
         if self.current_track_index is None:
             if not self.tracks:
                 return
@@ -146,7 +143,9 @@ class _Queue(object):
             return self.get_current_track()
 
         self.current_track_index += 1
-        if self.current_track_index >= len(self.tracks) and self.repeat_queue:
+        if self.current_track_index >= len(self.tracks):
+            if not self.repeat_queue:
+                return
             self.current_track_index = 0
 
         return self.get_current_track()
@@ -281,7 +280,6 @@ class AbstractPlayer:
         Runs in background.
         """
         track.create_station_async(callback=self._create_station_ready)
-        #raise NotImplementedError
 
     @property
     def random(self):
@@ -456,10 +454,8 @@ e        """
         Advance to next track in queue.
         See :meth:`._Queue.next`
         """
-        if self.queue.next(force):
+        if self.queue.next(force) is not None:
             self.play()
-        else:
-            self.stop()
 
     def prev(self, force=False):
         """
@@ -514,5 +510,6 @@ e        """
         Set a list of equalizer amplifications for each band.
         """
         raise NotImplementedError
+
 
 player = AbstractPlayer() # pylint: disable=invalid-name

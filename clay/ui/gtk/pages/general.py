@@ -12,7 +12,6 @@ class SongItem(Gtk.Grid):
         self._track = track
 
         # Download the album url and resize it to fit the screen
-        # TODO: Caching
         self.image = Gtk.Image()
         if track.album_url is not None and track.album_url != '':
             thread = threading.Thread(target=self._fetch_image)
@@ -35,6 +34,7 @@ class SongItem(Gtk.Grid):
         self.show_all()
 
     def _fetch_image(self):
+        # TODO: create a cache to save images and load them.
         http = urllib3.PoolManager()
         image = http.request('GET', self._track.album_url, preload_content=False)
 
@@ -131,6 +131,12 @@ class AbstractPage(Gtk.ScrolledWindow):
         Returns:
           Nothing
         """
+        # Shouldn't this be an exception?
+        if tracks is None:
+            print(error)
+            return
+
+        # TODO: Automatically fetch the album pictures
         self._tracks = sorted(tracks, key=self._sorting_func)
         self._add_songs(self._tracks[0:self._initial_fetch])
 

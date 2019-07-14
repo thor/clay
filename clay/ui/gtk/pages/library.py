@@ -2,6 +2,7 @@ from clay.core import gp
 from clay.playback.player import get_player
 from gi.repository import Gtk, GLib
 
+from .. import queue
 from .general import SongItem, AbstractPage
 
 player = get_player()
@@ -21,4 +22,4 @@ class LibraryPage(AbstractPage):
 
     def _activated(self, list_box, row, *args):
         track = row.get_children()[0]
-        player.append_to_queue(track._track)
+        queue.queue.add_song(track)
