@@ -60,17 +60,25 @@ class ArtistsPage(urwid.Columns, AbstractPage):
         self.songlist.set_placeholder('\n Select an album')
 
         urwid.connect_signal(self.artistlist, 'activate', self.item_activated)
-        urwid.connect_signal(self.albumlist, 'activate', self.album_activate)
+        urwid.connect_signal(self.albumlist, 'activate', self.album_activated)
 
-        super(ArtistsPage, self).__init__([self.artistlist, self.albumlist, self.songlist])
+        gp.parsed_songs += self.populate
+        gp.caches_invalidated += self.populate
+
+        super(ArtistsPage, self).__init__(
+            [self.artistlist, self.albumlist, self.songlist])
+
+    def populate(self):
+        self.artistlist.populate(gp.cached_artists)
+        self.app.redraw()
 
     def item_activated(self, artist):
         if artist.albums is not None:
             self.albumlist.populate(artist.albums)
 
-    def activate(self):
-        self.artistlist.populate(gp.cached_artists)
-
-    def album_activate(self, album):
+    def album_activated(self, album):
         self.songlist.populate(album.tracks)
         self.app.redraw()
+
+    def activate(self):
+        pass

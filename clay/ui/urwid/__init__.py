@@ -4,11 +4,11 @@ import sys
 from clay.core import gp, settings_manager, logger
 from clay.playback.player import get_player
 
-from .clipboard import copy
+from .clipboard import copy  # noqa: F401
 from .hotkeys import hotkey_manager
 from .notifications import notification_area
 from .playbar import PlayBar
-from .songlist import SongListBox
+from .songlist import SongListBox  # noqa: F401
 from .pages import *  # noqa: F403
 
 player = get_player()

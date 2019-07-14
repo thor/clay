@@ -39,6 +39,7 @@ class _GP(object):
     """
     # TODO: Switch to urwid signals for more explicitness?
     caches_invalidated = EventHook()
+    parsed_songs = EventHook()
 
     def __init__(self):
         # self.is_debug = os.getenv('CLAY_DEBUG')
@@ -139,7 +140,8 @@ class _GP(object):
             album_name = "Unknown Album"
 
         if id_ not in self.cached_albums:
-            self.cached_albums[id_] = Album(track.album_artist, {'albumId': id_, 'name': album_name})
+            self.cached_albums[id_] = Album(
+                track.album_artist, {'albumId': id_, 'name': album_name})
 
         self.cached_albums[id_].add_track(track)
 
@@ -200,6 +202,7 @@ class _GP(object):
             return self.cached_tracks
         data = self.mobile_client.get_all_songs()
         self.cached_tracks = Track.from_data(data, Source.library, True)
+        self.parsed_songs.fire()
 
         return self.cached_tracks
 
@@ -273,7 +276,8 @@ class _GP(object):
         """
         Refresh the liked songs playlist
         """
-        self.liked_songs.refresh_tracks(self.mobile_client.get_promoted_songs())
+        self.liked_songs.refresh_tracks(
+            self.mobile_client.get_promoted_songs())
 
     refresh_liked_songs_async = asynchronous(refresh_liked_songs)
 

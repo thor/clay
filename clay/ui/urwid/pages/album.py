@@ -12,6 +12,7 @@ class AlbumListBox(AbstractListBox):
     """
     List of playlists.
     """
+
     def __init__(self, app, icon):
         super(AlbumListBox, self).__init__(app, icon)
 
@@ -62,10 +63,12 @@ class AlbumsPage(urwid.Columns, AbstractPage):
 
     def __init__(self, app):
         self.app = app
-        self._first_run = True
         self.albumslist = AlbumListBox(app, '\u2630')
         self.songlist = SongListBox(app)
         self.songlist.set_placeholder('\n Select an album.')
+
+        gp.parsed_songs += self.populate
+        gp.caches_invalidated += self.populate
 
         urwid.connect_signal(
             self.albumslist, 'activate', self.playlist_activated
@@ -76,6 +79,10 @@ class AlbumsPage(urwid.Columns, AbstractPage):
             self.songlist
         ])
 
+    def populate(self, *_):
+        self.albumslist.populate(gp.cached_albums)
+        self.app.redraw()
+
     def playlist_activated(self, album):
         """
         Called when specific playlist is selected.
@@ -84,6 +91,4 @@ class AlbumsPage(urwid.Columns, AbstractPage):
         self.songlist.populate(album.tracks)
 
     def activate(self):
-        if self._first_run:
-            self.albumslist.populate(gp.cached_albums)
-            self._first_run = False
+        pass
