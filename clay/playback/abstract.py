@@ -3,7 +3,7 @@ An abstract class for playback
 
 Copyright (c) 2018, Valentijn van de Beek
 """
-from random import randint
+import random
 import json
 from copy import copy
 from uuid import uuid1
@@ -28,13 +28,13 @@ class _Queue(object):
 
     Can be populated with :class:`clay.core.gp.Track` instances.
     """
+
     def __init__(self):
         self.random = False
         self.repeat_one = False
         self.repeat_queue = False
 
         self.tracks = []
-        self._played_tracks = []
         self.current_track_index = None
 
     def clear(self):
@@ -43,7 +43,6 @@ class _Queue(object):
         """
         self.tracks = []
         self.current_track_index = None
-        self._played_tracks = []
 
     def load(self, tracks, current_track_index=0):
         """
@@ -135,14 +134,8 @@ class _Queue(object):
             if not self.tracks:
                 return
             self.current_track_index = self.tracks[0]
-        else:
-            self._played_tracks.append(self.current_track_index)
 
         if self.repeat_one and not force:
-            return self.get_current_track()
-
-        if self.random:
-            self.current_track_index = randint(0, len(self.tracks) - 1)
             return self.get_current_track()
 
         self.current_track_index += 1
@@ -151,24 +144,17 @@ class _Queue(object):
 
         return self.get_current_track()
 
-    def prev(self, force=False):
+    def prev(self):
         """
         Revert to the last song and return it.
-
-        If *force* is ``True`` then tracks will be changed event if
-        tracks repition is enabled. Otherwise current tracks may be
-        yielded again.
-
-        Manual tracks switching calls this method with ``force=True``.
         """
-        if self._played_tracks == []:
-            return None
+        if self.current_track_index <= 0:
+            if self.repeat_queue:
+                self.current_track_index = len(self.tracks) - 1
+            return
 
-        if self.repeat_one and not force:
-            mpris2.mpris2_manager.Seeked.emit(0)
-            return self.get_current_track()
+        self.current_track_index -= 1
 
-        self.current_track_index = self._played_tracks.pop()
         return self.get_current_track()
 
     def get_tracks(self):
@@ -196,9 +182,12 @@ class AbstractPlayer:
         self.queue = _Queue()
 
         # Add notification actions that we are going to use.
-        osd_manager.add_to_action("media-skip-backward", "Previous", lambda: self.prev(force=True))
-        osd_manager.add_to_action("media-playback-pause", "Pause", self.play_pause)
-        osd_manager.add_to_action("media-playback-start", "Play", self.play_pause)
+        osd_manager.add_to_action(
+            "media-skip-backward", "Previous", lambda: self.prev(force=True))
+        osd_manager.add_to_action(
+            "media-playback-pause", "Pause", self.play_pause)
+        osd_manager.add_to_action(
+            "media-playback-start", "Play", self.play_pause)
         osd_manager.add_to_action("media-skip-forward", "next", self.next)
 
     def broadcast_state(self):
@@ -299,7 +288,11 @@ class AbstractPlayer:
            value (`bool`):  Whether random track selection should be enabled or disabled.
         """
         self.queue.random = value
+        random.shuffle(self.queue.tracks)
+        self.queue.current_track_index = 0
+        self.play()
         self.playback_flags_changed.fire()
+        self.queue_changed.fire()
 
     @property
     def repeat_one(self):
@@ -356,7 +349,8 @@ class AbstractPlayer:
             return
 
         response = urlopen(url)
-        path = settings_manager.save_file_to_cache(track.filename, response.read())
+        path = settings_manager.save_file_to_cache(
+            track.filename, response.read())
         self._play_ready(path, None, track)
 
     @property
@@ -460,12 +454,12 @@ e        """
         else:
             self.stop()
 
-    def prev(self, force=False):
+    def prev(self):
         """
         Advance to their previous track in their queue
         seek :meth:`._Queue.prev`
         """
-        self.queue.prev(force)
+        self.queue.prev()
         self.play()
 
     def get_current_track(self):

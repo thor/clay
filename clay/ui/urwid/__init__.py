@@ -4,9 +4,11 @@ import sys
 from clay.core import gp, settings_manager, logger
 from clay.playback.player import get_player
 
+from .clipboard import copy
 from .hotkeys import hotkey_manager
 from .notifications import notification_area
 from .playbar import PlayBar
+from .songlist import SongListBox
 from .pages import *  # noqa: F403
 
 player = get_player()
@@ -22,6 +24,7 @@ class AppWidget(urwid.Frame):
         """
         Represents a single tab in header tabbar.
         """
+
         def __init__(self, page):
             self.page = page
             super(AppWidget.Tab, self).__init__(
@@ -103,14 +106,16 @@ class AppWidget(urwid.Frame):
         if self._login_notification:
             self._login_notification.close()
         if use_token and authtoken:
-            self._login_notification = notification_area.notify('Using cached auth token...')
+            self._login_notification = notification_area.notify(
+                'Using cached auth token...')
             gp.use_authtoken_async(
                 authtoken,
                 device_id,
                 callback=self.on_check_authtoken
             )
         elif username and password and device_id:
-            self._login_notification = notification_area.notify('Logging in...')
+            self._login_notification = notification_area.notify(
+                'Logging in...')
             gp.login_async(
                 username,
                 password,
@@ -147,7 +152,8 @@ class AppWidget(urwid.Frame):
         If *error* is ``None`` and *success* is ``True``, switch app to "My library" page.
         """
         if error:
-            self._login_notification.update('Failed to log in: {}'.format(str(error)))
+            self._login_notification.update(
+                'Failed to log in: {}'.format(str(error)))
             return
 
         if not success:
@@ -174,7 +180,7 @@ class AppWidget(urwid.Frame):
         try:
             self.current_page.songlist.end_filtering()
         except AttributeError as e:
-            logger.error(e)
+            logger.error(str(e))
 
         page = [page for page in self.pages if page.slug == slug][0]
         self.current_page = page
@@ -216,7 +222,8 @@ class AppWidget(urwid.Frame):
         Handle keypress.
         Can switch tabs, control playback, flags, notifications and app state.
         """
-        hotkey_manager.keypress("global", self, super(AppWidget, self), size, key)
+        hotkey_manager.keypress(
+            "global", self, super(AppWidget, self), size, key)
         return None
 
     def show_debug(self):
@@ -275,7 +282,7 @@ class AppWidget(urwid.Frame):
         """
         Play the previous song.
         """
-        player.prev(True)
+        player.prev()
 
     @staticmethod
     def seek_backward():
@@ -344,7 +351,8 @@ def main():
 
     # Run the actual program
     app_widget = AppWidget()
-    loop = urwid.MainLoop(app_widget, palette, event_loop=urwid.GLibEventLoop())
+    loop = urwid.MainLoop(app_widget, palette,
+                          event_loop=urwid.GLibEventLoop())
     app_widget.set_loop(loop)
     loop.screen.set_terminal_properties(256)
     loop.run()
