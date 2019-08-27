@@ -1,6 +1,7 @@
 """
 Components for song listing.
 """
+from enum import Enum
 import urwid
 
 from clay.core import gp, settings_manager
@@ -9,9 +10,66 @@ from clay.playback.player import get_player
 from .notifications import notification_area
 from .hotkeys import hotkey_manager
 from .clipboard import copy
-
+from .variables import States, Icons
 
 player = get_player()
+
+
+class _Line1:
+    _attributes = {
+        States.idle: ('line1', 'line1_focus'),
+        States.loading: ('line1_active', 'line1_active_focus'),
+        States.playing: ('line1_active', 'line1_active_focus'),
+        States.paused: ('line1_active', 'line1_active_focus')
+    }
+
+    def __init__(self):
+        self._left = urwid.SelectableIcon('', cursor_position=1000)
+        self._left.set_layout('left', 'clip', None)
+        self._right = urwid.Text('x')
+        self._content = urwid.Columns([
+            self._left,
+            ('pack', self._right),
+            ('pack', urwid.Text(' '))
+        ])
+        self._wrap = urwid.AttrWrap(self._content, 'line1')
+
+    def update_text(self, track):
+        self._left.set_text(
+            u'{index:3d} {icon} {title} [{minutes:02d}:{seconds:02d}]'.format(
+                index=track.index + 1,
+                icon=track.get_state_icon(track.state),
+                title=track.track.title,
+                minutes=track.track.duration // (1000 * 60),
+                seconds=(track.track.duration // 1000) % 60,
+            )
+        )
+
+        if settings_manager.get_is_file_cached(track.track.filename):
+            self._right.set_text(u' \u25bc Cached')
+        else:
+            self._right.set_text(u'')
+
+        self._right.set_text(u'{explicit} {rating}'.format(explicit=track.explicit, rating=track.rating))
+
+        self._wrap.set_attr(self._attributes[track.state][track.is_focused])
+
+
+class _Line2:
+    _attributes = {
+        States.idle: ('line2', 'line2_focus'),
+        States.loading: ('line2', 'line2_focus'),
+        States.playing: ('line2', 'line2_focus'),
+        States.paused: ('line2', 'line2_focus'),
+    }
+
+    def __init__(self):
+        self._content = urwid.Text('', wrap='clip')
+        self._wrap = urwid.AttrWrap(self._content, 'line2')
+
+    def update_text(self, track):
+        self._content.set_text(u'      {} \u2015 {}'.format(track.track.artist, track.track.album_name))
+        self._wrap.set_attr(self._attributes[track.state][track.is_focused])
 
 
 class SongListItem(urwid.Pile):
@@ -29,69 +87,18 @@ class SongListItem(urwid.Pile):
         'context-menu-requested'
     ]
 
-    STATE_IDLE = 0
-    STATE_LOADING = 1
-    STATE_PLAYING = 2
-    STATE_PAUSED = 3
-
-    LINE1_ATTRS = {
-        STATE_IDLE: ('line1', 'line1_focus'),
-        STATE_LOADING: ('line1_active', 'line1_active_focus'),
-        STATE_PLAYING: ('line1_active', 'line1_active_focus'),
-        STATE_PAUSED: ('line1_active', 'line1_active_focus')
-    }
-    LINE2_ATTRS = {
-        STATE_IDLE: ('line2', 'line2_focus'),
-        STATE_LOADING: ('line2', 'line2_focus'),
-        STATE_PLAYING: ('line2', 'line2_focus'),
-        STATE_PAUSED: ('line2', 'line2_focus')
-    }
-
-    STATE_ICONS = {
-        0: ' ',
-        1: u'\u2505',
-        2: u'\u25B6',
-        3: u'\u25A0'
-    }
-
-    RATING_ICONS = {
-        0: ' ',
-        1: u'\U0001F593' if _unicode else '-',
-        2: u'\U0001F593' if _unicode else '2',
-        3: u'\U0001F593' if _unicode else '3',
-        4: u'\U0001F593' if _unicode else '4',
-        5: u'\U0001F592' if _unicode else '+'
-    }
-
-    EXPLICIT_ICONS = {
-        0: ' ',  # not actually used?
-        1: u'\U0001F174' if _unicode else '[E]',
-        2: ' ',
-        3: ' '
-    }
-
     def __init__(self, track):
         self.track = track
-        self.rating = self.RATING_ICONS[track.rating]
-        self.explicit = self.EXPLICIT_ICONS[track.explicit_rating]
+        self.rating = Icons.ratings[track.rating]
+        self.explicit = Icons.explicit[track.explicit_rating]
         self.index = 0
-        self.state = SongListItem.STATE_IDLE
-        self.line1_left = urwid.SelectableIcon('', cursor_position=1000)
-        self.line1_left.set_layout('left', 'clip', None)
-        self.line1_right = urwid.Text('x')
-        self.line1 = urwid.Columns([
-            self.line1_left,
-            ('pack', self.line1_right),
-            ('pack', urwid.Text(' '))
-        ])
-        self.line2 = urwid.Text('', wrap='clip')
-
-        self.line1_wrap = urwid.AttrWrap(self.line1, 'line1')
-        self.line2_wrap = urwid.AttrWrap(self.line2, 'line2')
+        self.state = States.idle
+        self.line1 = _Line1()
+        self.line2 = _Line2()
 
         self.content = urwid.Pile([
-            self.line1_wrap,
-            self.line2_wrap,
+            self.line1._wrap,
+            self.line2._wrap,
             urwid.Text('')
         ])
 
@@ -107,10 +114,10 @@ class SongListItem(urwid.Pile):
         Set state for this song.
         Possible choices are:
 
-        - :attr:`.SongListItem.STATE_IDLE`
-        - :attr:`.SongListItem.STATE_LOADING`
-        - :attr:`.SongListItem.STATE_PLAYING`
-        - :attr:`.SongListItem.STATE_PAUSED`
+        - :attr:`States.idle`
+        - :attr:`States.loading`
+        - :attr:`States.playing`
+        - :attr:`States.paused`
         """
         self.state = state
         self.update_text()
@@ -120,35 +127,14 @@ class SongListItem(urwid.Pile):
         """
         Get icon char for specific state.
         """
-        return SongListItem.STATE_ICONS[state]
+        return Icons.state[state.value]
 
     def update_text(self):
         """
         Update text of this item from the attached track.
         """
-        self.line1_left.set_text(
-            u'{index:3d} {icon} {title} [{minutes:02d}:{seconds:02d}]'.format(
-                index=self.index + 1,
-                icon=self.get_state_icon(self.state),
-                title=self.track.title,
-                minutes=self.track.duration // (1000 * 60),
-                seconds=(self.track.duration // 1000) % 60,
-            )
-        )
-
-        if settings_manager.get_is_file_cached(self.track.filename):
-            self.line1_right.set_text(u' \u25bc Cached')
-        else:
-            self.line1_right.set_text(u'')
-
-        self.line1_right.set_text(u'{explicit} {rating}'.format(explicit=self.explicit,
-                                                                rating=self.rating))
-
-        self.line2.set_text(
-            u'      {} \u2015 {}'.format(self.track.artist, self.track.album_name)
-        )
-        self.line1_wrap.set_attr(SongListItem.LINE1_ATTRS[self.state][self.is_focused])
-        self.line2_wrap.set_attr(SongListItem.LINE2_ATTRS[self.state][self.is_focused])
+        self.line1.update_text(self)
+        self.line2.update_text(self)
 
     @property
     def full_title(self):
@@ -201,7 +187,7 @@ class SongListItem(urwid.Pile):
         """
         Removes all the songs from the queue.
         """
-        self.set_state(SongListItem.STATE_IDLE)
+        self.set_state(States.idle)
         self.is_focused = False
         self._send_signal("clear-queue")
 
@@ -239,14 +225,10 @@ class SongListItem(urwid.Pile):
     @property
     def is_currently_played(self):
         """
-        Return ``True`` if song is in state :attr:`.SongListItem.STATE_PLAYING`
-        or :attr:`.SongListItem.STATE_PAUSED`.
+        Return ``True`` if song is in state :attr:`.States.playing`
+        or :attr:`.States.paused`.
         """
-        return self.state in (
-            SongListItem.STATE_LOADING,
-            SongListItem.STATE_PLAYING,
-            SongListItem.STATE_PAUSED
-        )
+        return self.state in (States.loading, States.playing, States.paused)
 
     def set_index(self, index):
         """
@@ -525,7 +507,7 @@ class SongListBox(urwid.Frame):
         for index, track in enumerate(tracks):
             songitem = SongListItem(track)
             if current_track is not None and current_track == track:
-                songitem.set_state(SongListItem.STATE_LOADING)
+                songitem.set_state(States.loading)
                 if current_index is None:
                     current_index = index
             urwid.connect_signal(
@@ -642,10 +624,10 @@ class SongListBox(urwid.Frame):
                 continue
             if songitem.track == track or \
                (self.app.current_page.slug != 'queue' and songitem.track.id is track.id):
-                songitem.set_state(SongListItem.STATE_LOADING)
+                songitem.set_state(States.loading)
                 self.walker.set_focus(i)
-            elif songitem.state != SongListItem.STATE_IDLE:
-                songitem.set_state(SongListItem.STATE_IDLE)
+            elif songitem.state != States.idle:
+                songitem.set_state(States.idle)
 
     def media_state_changed(self, is_loading, is_playing):
         """
@@ -661,11 +643,9 @@ class SongListBox(urwid.Frame):
                 continue
             if songitem.track == current_track:
                 songitem.set_state(
-                    SongListItem.STATE_LOADING
-                    if is_loading
-                    else SongListItem.STATE_PLAYING
-                    if is_playing
-                    else SongListItem.STATE_PAUSED
+                    States.loading if is_loading else
+                    States.playing if is_playing else
+                    States.paused
                 )
         self.app.redraw()
 
