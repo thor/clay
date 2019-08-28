@@ -19,7 +19,7 @@ class DebugItem(urwid.AttrMap):
         self.log_record = log_record
 
         self.columns = urwid.Columns([
-            ('pack', urwid.Text(self.log_record.verbosity.ljust(8))),
+            ('pack', urwid.Text(self.log_record.verbosity.name.ljust(8))),
             urwid.Text(
                 (
                     self.log_record.formatted_timestamp + '\n' + self.log_record.formatted_message

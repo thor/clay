@@ -45,6 +45,7 @@ hotkeys:
     send_query: enter
 
 clay_settings:
+  debug_level: 'error'
   mod_key: ctrl
   unicode: true
   desktop_notifications: true

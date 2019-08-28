@@ -3,8 +3,17 @@ Logger implementation.
 """
 from threading import Lock
 from datetime import datetime
+from enum import IntEnum
 
-from . import EventHook
+
+from . import EventHook, settings
+
+
+class LogLevel(IntEnum):
+    debug = 0
+    info = 1
+    warning = 2
+    error = 3
 
 
 class _LoggerRecord(object):
@@ -51,8 +60,17 @@ class _Logger(object):
         self.logfile = open('/tmp/clay.log', 'w')
 
         self._lock = Lock()
-
         self.on_log_event = EventHook()
+
+        verbosity = settings.settings_manager.get('debug_level', 'clay_settings')
+
+        for level in LogLevel:
+            if level.name == verbosity:
+                self._verbosity = level
+                return
+        else:
+            self._verbosity = LogLevel.error
+            self.error("Unknown loglevel: '%s'" % verbosity)
 
     def log(self, level, message, *args):
         """
@@ -60,6 +78,9 @@ class _Logger(object):
         """
         self._lock.acquire()
         try:
+            if level < self._verbosity:
+                return
+
             logger_record = _LoggerRecord(level, message, args)
             self.logs.append(logger_record)
             self.logfile.write('{} {:8} {}\n'.format(
@@ -76,19 +97,19 @@ class _Logger(object):
         """
         Add debug log item.
         """
-        self.log('DEBUG', message, *args)
+        self.log(LogLevel.debug, message, *args)
 
     def info(self, message, *args):
         """
         Add info log item.
         """
-        self.log('INFO', message, *args)
+        self.log(LogLevel.info, message, *args)
 
     def warn(self, message, *args):
         """
         Add warning log item.
         """
-        self.log('WARNING', message, *args)
+        self.log(LogLevel.warn, message, *args)
 
     warning = warn
 
@@ -96,7 +117,7 @@ class _Logger(object):
         """
         Add error log item.
         """
-        self.log('ERROR', message, *args)
+        self.log(LogLevel.error, message, *args)
 
     def get_logs(self):
         """
