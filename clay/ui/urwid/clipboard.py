@@ -1,14 +1,12 @@
 """
 Clipboard utils.
 """
-from subprocess import Popen, PIPE
+import shlex, subprocess
+from clay.core import settings_manager
 from clay.ui.urwid.notifications import notification_area
 
-
-COMMANDS = [
-    ('xclip', '-selection', 'clipboard'),
-    ('xsel', '-bi'),
-]
+cmd = settings_manager.get('copy_command', 'clay_settings')
+COMMAND = shlex.split(cmd) if cmd is not None else None
 
 
 def copy(text):
@@ -17,14 +15,16 @@ def copy(text):
 
     Return True on success.
     """
-    for cmd in COMMANDS:
-        proc = Popen(cmd, stdin=PIPE)
+    try:
+        if COMMAND is None:
+            return
+        proc = subprocess.Popen(COMMAND, stdin=subprocess.PIPE)
         proc.communicate(text.encode('utf-8'))
-        if proc.returncode == 0:
-            return True
-
-    notification_area.notify(
-        'Failed to copy text to clipboard. '
-        'Please install "xclip" or "xsel".'
-    )
-    return False
+    except FileNotFoundError:
+        notification_area.notify(
+            'Failed to copy text to clipboard. '
+            'Please install "%s"' % COMMAND[0])
+    except Exception as e:
+        notification_area.notify(
+            'Failed to copy text to clipboard. '
+            'Unknown error: "%s".' % e)

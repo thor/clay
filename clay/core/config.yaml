@@ -50,6 +50,7 @@ clay_settings:
   unicode: true
   desktop_notifications: true
   player_class: clay.playback.mpv:MPVPlayer
+  copy_command: "xsel -ib"
 
 play_settings:
   authtoken:
