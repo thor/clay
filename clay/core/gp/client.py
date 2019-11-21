@@ -103,9 +103,15 @@ class _GP(object):
         """
         self.mobile_client.logout()
         self.invalidate_caches()
-        result = self.mobile_client.login(email, password, device_id)
-        # prev_auth_state = self.is_authenticated
-        # if prev_auth_state != self.is_authenticated:
+        from os.path import exists
+        CRED_FILE = "/home/thor/.config/clay/google_auth.cred"
+        if not exists(CRED_FILE):
+            from oauth2client.client import FlowExchangeError
+            try:
+                self.mobile_client.perform_oauth(CRED_FILE, open_browser=True)
+            except FlowExchangeError:
+                raise RuntimeError("OAuth authentication failed, try again")
+        result = self.mobile_client.oauth_login(self.mobile_client.FROM_MAC_ADDRESS, CRED_FILE)
         self.auth_state_changed.fire(self.is_authenticated)
         return result
 
