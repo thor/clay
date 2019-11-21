@@ -180,6 +180,7 @@ class AbstractPlayer:
     def __init__(self):
         self._create_station_notification = None
         self.queue = _Queue()
+        self._loading = False
 
         # Add notification actions that we are going to use.
         osd_manager.add_to_action(
@@ -356,6 +357,10 @@ class AbstractPlayer:
     @property
     def loading(self):
         return self._loading
+
+    @loading.setter
+    def loading(self, value):
+        self._loading = value
 
     @property
     def playing(self):
